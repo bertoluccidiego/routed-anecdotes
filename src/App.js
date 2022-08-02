@@ -8,6 +8,8 @@ import {
   useNavigate,
 } from 'react-router-dom';
 
+import { useField } from './hooks/index';
+
 function Anecdotes({ anecdotes }) {
   return (
     <div>
@@ -35,6 +37,9 @@ function Anecdote({ anecdote }) {
 
 function Create({ anecdotes, setAnecdotes, setNotification }) {
   const navigate = useNavigate();
+  const content = useField('text');
+  const author = useField('text');
+  const info = useField('text');
 
   function generateId() {
     return Math.round(Math.random() * 1000000);
@@ -43,17 +48,10 @@ function Create({ anecdotes, setAnecdotes, setNotification }) {
   function newAnecdoteHandler(event) {
     event.preventDefault();
 
-    const content = event.target.content.value;
-    const author = event.target.author.value;
-    const info = event.target.url.value;
-    event.target.content.value = '';
-    event.target.author.value = '';
-    event.target.url.value = '';
-
     const newAnecdoteObj = {
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0,
       id: generateId(),
     };
@@ -64,23 +62,32 @@ function Create({ anecdotes, setAnecdotes, setNotification }) {
     navigate('/');
   }
 
+  function resetFormHandler() {
+    content.reset();
+    author.reset();
+    info.reset();
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
       <form onSubmit={newAnecdoteHandler}>
         <div>
           content
-          <input type="text" name="content" />
+          <input {...content} reset="" />
         </div>
         <div>
           author
-          <input type="text" name="author" />
+          <input {...author} reset="" />
         </div>
         <div>
           url for more info
-          <input type="text" name="url" />
+          <input {...info} reset="" />
         </div>
         <button type="submit">save</button>
+        <button type="button" onClick={resetFormHandler}>
+          reset
+        </button>
       </form>
     </div>
   );
